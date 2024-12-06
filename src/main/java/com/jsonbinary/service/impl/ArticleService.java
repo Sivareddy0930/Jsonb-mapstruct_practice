@@ -1,5 +1,6 @@
 package com.jsonbinary.service.impl;
 
+import com.jsonbinary.dto.ApiResponse;
 import com.jsonbinary.dto.ArticleDto;
 import com.jsonbinary.entity.Article;
 import com.jsonbinary.entity.Location;
@@ -10,6 +11,9 @@ import com.jsonbinary.service.ArticleServiceInterface;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,15 +36,6 @@ public class ArticleService implements ArticleServiceInterface {
     @Override
     public ArticleDto create(ArticleDto articleDto) {
 
-//        Article article = new Article();
-//        article.setMobile(new Mobile( articleDto.getMobileDto().getPersonalNumber(), articleDto.getMobileDto().getWorkNumber()));
-//        article.setId( articleDto.getId() );
-//        article.setTitle( articleDto.getTitle() );
-//        article.setSummary( articleDto.getSummary() );
-//        article.setText( articleDto.getText() );
-//        article.setAuthor( articleDto.getAuthor() );
-
-
         Article article = articleMapper.toArticle(articleDto);
         Article savedArticle = articleRepository.save(article);
         ArticleDto savedArticleDto = articleMapper.toArticleDto(savedArticle);
@@ -59,13 +54,78 @@ public class ArticleService implements ArticleServiceInterface {
     }
 
     @Override
-    public List<ArticleDto> getAllArticles() {
+    public ApiResponse getAllArticles() {
         Iterable<Article> articles = articleRepository.findAll();
         List<ArticleDto> articleDtoList = new ArrayList<>();
         for (Article article : articles){
             ArticleDto articleDto = articleMapper.toArticleDto(article);
             articleDtoList.add(articleDto);
         }
-        return articleDtoList;
+        ApiResponse response = new ApiResponse();
+        response.setCount(articleDtoList.size());
+        response.setArticleDtoList(articleDtoList);
+        return response;
+    }
+
+
+    public ApiResponse getArticlesBySorting(String value){
+        List<Article> articles = articleRepository.findAll(Sort.by(Sort.Direction.ASC,value));
+
+        List<ArticleDto> articleDtoList = new ArrayList<>();
+        for (Article article : articles){
+            ArticleDto articleDto = articleMapper.toArticleDto(article);
+            articleDtoList.add(articleDto);
+        }
+        ApiResponse response = new ApiResponse();
+        response.setCount(articleDtoList.size());
+        response.setArticleDtoList(articleDtoList);
+        return response;
+
+    }
+
+
+
+
+    public ApiResponse getArticlesWithPagination(int pageNumber, int pageSize){
+        Page<Article> articlePage = articleRepository.findAll(PageRequest.of(pageNumber, pageSize));
+
+
+
+        // Convert each article to ArticleDto using the mapper
+        List<ArticleDto> articleDtoList = new ArrayList<>();
+
+        for (Article article : articlePage.getContent()) {
+            ArticleDto articleDto = articleMapper.toArticleDto(article);
+            articleDtoList.add(articleDto);
+        }
+
+        ApiResponse response = new ApiResponse();
+        response.setCount(articleDtoList.size());
+        response.setArticleDtoList(articleDtoList);
+        return response;
+
+    }
+
+
+
+
+    public ApiResponse getArticlesWithPaginationAndSorting(int pageNumber, int pageSize,String value){
+        Page<Article> articlePage = articleRepository.findAll(PageRequest.of(pageNumber, pageSize).withSort(Sort.Direction.ASC, value));
+
+
+
+        // Convert each article to ArticleDto using the mapper
+        List<ArticleDto> articleDtoList = new ArrayList<>();
+
+        for (Article article : articlePage.getContent()) {
+            ArticleDto articleDto = articleMapper.toArticleDto(article);
+            articleDtoList.add(articleDto);
+        }
+
+        ApiResponse response = new ApiResponse();
+        response.setCount(articleDtoList.size());
+        response.setArticleDtoList(articleDtoList);
+        return response;
+
     }
 }
