@@ -14,15 +14,8 @@ import java.util.Map;
 
 
 @Entity
-@Data
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name="articles")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-
 public class Article {
 
     @Id
@@ -46,6 +39,10 @@ public class Article {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> location;
+
+    @Type(type = "jsonb" )
+    @Column(columnDefinition = "jsonb")
+    private Mobile mobile;
 
     @Column(name = "date_created")
     private LocalDateTime dateCreated;
@@ -125,5 +122,13 @@ public class Article {
 
     public void setDateUpdated(LocalDateTime dateUpdated) {
         this.dateUpdated = dateUpdated;
+    }
+
+    public Mobile getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(Mobile mobile) {
+        this.mobile = mobile;
     }
 }

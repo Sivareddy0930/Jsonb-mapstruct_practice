@@ -1,0 +1,61 @@
+ Mapping for Simple Types vs. Custom Types
+Map<String, Object> (location):
+
+MapStruct can handle Map types without any issue, as long as the data in the map can be converted automatically.
+If you are storing data in location as JSON (e.g., {"USA": {"city": "San Francisco"}}), MapStruct can simply copy the Map from the source (Article) to the target (ArticleDto) as long as the destination is also a Map<String, Object>.
+No explicit mapping is required because MapStruct has built-in support for Map<String, Object>, and it can directly copy the values from one to the other if the structure is compatible (in this case, a Map to a Map).
+This is why MapStruct doesn't raise any issue with the location field: both source and destination are Map<String, Object>, so the mapping is straightforward and automatic.
+
+Mobile and MobileDto (mobile):
+
+Mobile and MobileDto are custom types (classes). Unlike simple types like String, Integer, or Map, MapStruct does not know how to automatically map between custom types (like Mobile and MobileDto) unless you specifically define how to do so.
+MapStruct cannot infer how to map these types automatically, because it doesn’t know how to convert one class (Mobile) to another (MobileDto). This is why you need to explicitly define how to map between them using a method like toMobileDto(Mobile) and toMobile(MobileDto).
+2. Why No Problem with location (Map)?
+Built-in Support: MapStruct can handle Map fields with minimal effort because it knows how to work with collections and simple types. It doesn’t require a custom mapping method unless you are working with complex nested structures or need custom serialization.
+
+JSON Handling in Map: Since location is a Map<String, Object>, which is compatible with a JSON-like structure, the underlying jsonb handling in Hibernate or JPA can automatically handle the conversion of the map between JSON and the object in Java. MapStruct just maps it from one Map<String, Object> to another without needing to know the specific content of the map.
+
+3. Why You Need a Mapper for Mobile (Custom Class)?
+Custom Classes: Mobile and MobileDto are custom Java classes with properties that MapStruct does not know how to convert by default. To convert one custom class to another, MapStruct needs explicit instructions (i.e., mappings for each field in Mobile and MobileDto).
+
+For example, Mobile might have fields like brand and model, and MobileDto might have different names or need specific transformations for these fields. Without explicit mappings, MapStruct will throw an error when it encounters such fields because it cannot infer how to perform the conversion automatically.
+
+4. Automatic Conversion with Simple Types vs. Complex Types
+Simple Types (like String, Integer, Map, etc.):
+MapStruct can handle these types automatically, as long as they are compatible between source and target.
+Complex Types (like Mobile, MobileDto, etc.):
+MapStruct cannot automatically know how to convert between these types. You must define a custom method or create a custom mapping for complex types.
+5. Differences in Handling location and mobile
+For the location field, MapStruct doesn't need to do anything special because Map<String, Object> is a common structure that MapStruct can handle with its built-in functionality.
+For the mobile field, MapStruct needs explicit mappings to understand how to convert a Mobile object into a MobileDto object, as Mobile is a custom class and there’s no default mechanism for it to figure out how to do the conversion.
+Conclusion:
+No problem with location because MapStruct can automatically handle Map<String, Object>.
+Problem with mobile because Mobile and MobileDto are custom classes, and MapStruct requires explicit mappings between them.
+Solution:
+To fix the issue with mobile, you should define the mapping methods for Mobile to MobileDto (and vice versa) as discussed earlier. Here's a recap of the solution:
+
+java
+Copy code
+@Mapper(componentModel = "spring")
+public interface ArticleMapper {
+
+    @Mapping(source = "mobile", target = "mobile")  // Uses MobileMapper for conversion
+    ArticleDto toArticleDto(Article article);
+
+    @Mapping(source = "mobile", target = "mobile")  // Uses MobileMapper for conversion
+    Article toArticle(ArticleDto articleDto);
+
+    // Mapping Mobile to MobileDto
+    MobileDto toMobileDto(Mobile mobile);
+
+    // Mapping MobileDto to Mobile
+    Mobile toMobile(MobileDto mobileDto);
+}
+This will resolve the mapping issue for the mobile field and allow the conversion between Mobile and MobileDto to be handled correctly.
+
+
+
+
+
+
+

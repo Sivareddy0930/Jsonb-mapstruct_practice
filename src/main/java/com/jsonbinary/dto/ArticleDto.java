@@ -1,44 +1,39 @@
 package com.jsonbinary.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Getter
-@Setter
-//@JsonInclude(JsonInclude.Include.NON_NULL)//indicate which properties need to serialize.
+
+@JsonInclude(JsonInclude.Include.NON_NULL)//indicate which properties need to serialize.
 public class ArticleDto {
     private Long id;
 
-//    @NotNull(message = "Title should be populated")
-//    @Size(min = 1, max = 100, message = "Title length must be between 1 and 100")
+    @NotNull(message = "Title should be populated")
+    @Size(min = 1, max = 100, message = "Title length must be between 1 and 100")
     private String title;
 
-//    @Size(max = 255, message = "Summary length shouldn't be greater than 255")
+    @Size(max = 255, message = "Summary length shouldn't be greater than 255")
     private String summary;
 
-//    @NotNull(message = "Text should be populated")
-//    @Size(min = 1, message = "Text length should be 1 at least")
+    @NotNull(message = "Text should be populated")
+    @Size(min = 1, message = "Text length should be 1 at least")
     private String text;
 
-//    @NotNull(message = "Author should be populated")
+    @NotNull(message = "Author should be populated")
     private String author;
 
     private Map<String, Object> location;
 
-    //    @Null(message = "DateCreated shouldn't be populated")
+    private MobileDto mobileDto;
+
+        @Null(message = "DateCreated shouldn't be populated")
     private LocalDateTime dateCreated;
 
-//    @Null(message = "DateUpdated shouldn't be populated")
+    @Null(message = "DateUpdated shouldn't be populated")
     private LocalDateTime dateUpdated;
 
 
@@ -104,5 +99,13 @@ public class ArticleDto {
 
     public void setDateUpdated(LocalDateTime dateUpdated) {
         this.dateUpdated = dateUpdated;
+    }
+
+    public MobileDto getMobileDto() {
+        return mobileDto;
+    }
+
+    public void setMobileDto(MobileDto mobileDto) {
+        this.mobileDto = mobileDto;
     }
 }

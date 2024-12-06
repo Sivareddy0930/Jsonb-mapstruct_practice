@@ -1,7 +1,6 @@
 package com.jsonbinary.controller;
 
 import com.jsonbinary.dto.ArticleDto;
-import com.jsonbinary.dto.Demo;
 import com.jsonbinary.entity.Article;
 import com.jsonbinary.service.ArticleServiceInterface;
 
@@ -15,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -24,8 +24,8 @@ public class ArticleController {
     private ArticleServiceInterface articleService;
 
     @PostMapping("/create")
-    public ResponseEntity<ArticleDto> createArticle( @RequestBody ArticleDto articleDto){
-        System.out.println("Received ArticleDto:" + articleDto);
+    public ResponseEntity<ArticleDto> createArticle( @RequestBody @Valid ArticleDto articleDto){
+//        System.out.println("Received ArticleDto:" + articleDto);
         ArticleDto savedArticleDto = articleService.create(articleDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedArticleDto);
     }
@@ -33,6 +33,12 @@ public class ArticleController {
     @GetMapping("getArticle/{id}")
     public ResponseEntity<ArticleDto> getArticle(@PathVariable Long id){
         ArticleDto articleDto = articleService.getById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(articleDto);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<ArticleDto>> getAllArticle(){
+        List<ArticleDto> articleDto = articleService.getAllArticles();
         return ResponseEntity.status(HttpStatus.OK).body(articleDto);
     }
 
