@@ -3,19 +3,16 @@ package com.jsonbinary.service.impl;
 import com.jsonbinary.dto.ApiResponse;
 import com.jsonbinary.dto.ArticleDto;
 import com.jsonbinary.entity.Article;
-import com.jsonbinary.entity.Location;
-import com.jsonbinary.entity.Mobile;
 import com.jsonbinary.mapper.ArticleMapper;
 import com.jsonbinary.repository.ArticleRepository;
 import com.jsonbinary.service.ArticleServiceInterface;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -118,6 +115,31 @@ public class ArticleService implements ArticleServiceInterface {
         List<ArticleDto> articleDtoList = new ArrayList<>();
 
         for (Article article : articlePage.getContent()) {
+            ArticleDto articleDto = articleMapper.toArticleDto(article);
+            articleDtoList.add(articleDto);
+        }
+
+        ApiResponse response = new ApiResponse();
+        response.setCount(articleDtoList.size());
+        response.setArticleDtoList(articleDtoList);
+        return response;
+
+    }
+
+
+
+    public ApiResponse getArticlesWithFiltersPaginationAndSorting(int pageNumber, int pageSize, String title, String author, String country){
+
+        int offset = pageNumber * pageSize;
+
+        List<Article> articlePage = articleRepository.getAllArticlesBasedOnFiltersAndPagenationandSorting(offset, pageSize, title, author, country);
+
+
+
+        // Convert each article to ArticleDto using the mapper
+        List<ArticleDto> articleDtoList = new ArrayList<>();
+
+        for (Article article : articlePage) {
             ArticleDto articleDto = articleMapper.toArticleDto(article);
             articleDtoList.add(articleDto);
         }

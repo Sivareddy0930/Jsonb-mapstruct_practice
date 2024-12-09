@@ -2,6 +2,7 @@ package com.jsonbinary.controller;
 
 import com.jsonbinary.dto.ApiResponse;
 import com.jsonbinary.dto.ArticleDto;
+import com.jsonbinary.dto.FilterDto;
 import com.jsonbinary.entity.Article;
 import com.jsonbinary.service.ArticleServiceInterface;
 
@@ -20,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class ArticleController {
-//
+
     @Autowired
     private ArticleServiceInterface articleService;
 
@@ -62,5 +63,10 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @GetMapping("/fps/{pageNumber}/{pageSize}")
+    public ResponseEntity<ApiResponse> getAllArticleByPaginationAndSorting(@PathVariable int pageNumber, @PathVariable int pageSize,@RequestBody FilterDto filterDto){
+        ApiResponse apiResponse = articleService.getArticlesWithFiltersPaginationAndSorting(pageNumber, pageSize,filterDto.getTitle(),filterDto.getAuthor(),filterDto.getCountry());
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 
 }

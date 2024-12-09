@@ -18,4 +18,7 @@ public interface ArticleServiceInterface {
     ApiResponse getArticlesWithPagination(int pageNumber, int pageSize);
 
     ApiResponse getArticlesWithPaginationAndSorting(int pageNumber, int pageSize,String value);
+
+    ApiResponse getArticlesWithFiltersPaginationAndSorting(int pageNumber, int pageSize, String title, String author, String country);
+
 }
